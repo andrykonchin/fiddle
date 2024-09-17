@@ -28,6 +28,8 @@ jobs:
         include:
           - { os: windows-latest , ruby: mingw }
           - { os: windows-latest , ruby: mswin }
+          - { os: ubuntu-latest , ruby: truffleruby }
+          - { os: ubuntu-latest , ruby: jruby }
         exclude:
           - { os: macos-14  , ruby: '2.5' }
           - { os: windows-latest , ruby: '3.0' }
@@ -58,6 +60,10 @@ jobs:
       - run: gem install pkg/*.gem
 
       - run: rake test
+        # Don't run specs on TruffleRuby and JRuby
+        if: >-
+          matrix.ruby != 'truffleruby' &&
+          matrix.ruby != 'jruby'
         env:
           RUBYOPT: --disable=gems
 
@@ -65,9 +71,12 @@ jobs:
         # We can't use Fiddle gem with RubyInstaller because
         # RubyInstaller requires Fiddle before rubygems is loaded:
         # https://github.com/oneclick/rubyinstaller2/blob/master/lib/ruby_installer/build/dll_directory.rb#L1
+        #
+        # Don't run specs on TruffleRuby and JRuby
         if: >-
-          matrix.os != 'windows-latest' ||
-          (matrix.os == 'windows-latest' && matrix.ruby == 'mswin')
+          (matrix.os != 'windows-latest' ||
+            (matrix.os == 'windows-latest' && matrix.ruby == 'mswin')) &&
+          (matrix.ruby != 'truffleruby' && matrix.ruby != 'jruby')
         run: |
           ruby -run -e cp -- -pr test/ tmp/
           cd tmp
