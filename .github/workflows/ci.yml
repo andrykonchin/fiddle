@@ -62,8 +62,7 @@ jobs:
       - run: rake test
         # Don't run specs on TruffleRuby and JRuby
         if: >-
-          matrix.ruby != 'truffleruby' &&
-          matrix.ruby != 'jruby'
+          matrix.ruby != 'truffleruby'
         env:
           RUBYOPT: --disable=gems
 
@@ -76,7 +75,7 @@ jobs:
         if: >-
           (matrix.os != 'windows-latest' ||
             (matrix.os == 'windows-latest' && matrix.ruby == 'mswin')) &&
-          (matrix.ruby != 'truffleruby' && matrix.ruby != 'jruby')
+          (matrix.ruby != 'truffleruby')
         run: |
           ruby -run -e cp -- -pr test/ tmp/
           cd tmp
